@@ -8,6 +8,30 @@
     },
     {
       "path": "./apps/console"
+    },
+    {
+      "path": "./apps/customer-portal-e2e"
+    },
+    {
+      "path": "./apps/customer-portal"
+    },
+    {
+      "path": "./packages/ui"
+    },
+    {
+      "path": "./apps/marketing-e2e"
+    },
+    {
+      "path": "./apps/marketing"
+    },
+    {
+      "path": "./apps/auth-e2e"
+    },
+    {
+      "path": "./apps/auth"
+    },
+    {
+      "path": "./packages/tracking"
     }
   ]
 }

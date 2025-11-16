@@ -1,0 +1,10 @@
+{
+  "name": "@smallbiznis/customer-portal-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "@smallbiznis/customer-portal"
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@smallbiznis/ui",
+  "root": "packages/ui",
+  "sourceRoot": "packages/ui",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/rollup:rollup",
+      "options": {
+        "outputPath": "packages/ui/dist",
+        "main": "packages/ui/index.ts",
+        "tsConfig": "packages/ui/tsconfig.lib.json",
+        "rollupConfig": "packages/ui/rollup.config.cjs"
+      }
+    }
+  }
+}
