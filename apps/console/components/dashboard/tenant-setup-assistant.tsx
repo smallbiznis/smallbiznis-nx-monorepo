@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { Badge } from '@smallbiznis/ui/badge';
 import { Button } from '@smallbiznis/ui/button';
@@ -9,111 +9,99 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@smal
 import { Progress } from '@smallbiznis/ui/progress';
 import { Separator } from '@smallbiznis/ui/separator';
 import { cn } from '@smallbiznis/ui/utils';
-import { ArrowUpRight, CheckCircle2, Clock3, PauseCircle, ShieldCheck } from 'lucide-react';
+import { ArrowUpRight, Check, CheckCircle2, Clock3 } from 'lucide-react';
 
 type StepStatus = 'pending' | 'in-progress' | 'completed';
 
-interface SetupStep {
+type SetupStep = {
   id: string;
   title: string;
   description: string;
   href: string;
-  helpHref: string;
-}
+};
 
 const steps: SetupStep[] = [
   {
     id: 'billing-profile',
     title: 'Configure Billing Profile',
-    description: 'Add remittance details, tax identity, and payout configuration to issue invoices.',
+    description: 'Add legal entity, remittance, and payout details to issue invoices.',
     href: '/billing-profile',
-    helpHref: '#',
   },
   {
     id: 'api-keys',
     title: 'Generate API Keys',
-    description: 'Provision publishable and secret keys per environment to authenticate collectors.',
+    description: 'Provision publishable and secret keys for sandbox and production.',
     href: '/api-keys',
-    helpHref: '#',
   },
   {
     id: 'meters',
     title: 'Define Meters (Metric Definitions)',
     description: 'Register measurable events to power usage-based billing and quota enforcement.',
     href: '/meters',
-    helpHref: '#',
   },
   {
     id: 'products',
     title: 'Create Products',
-    description: 'Model billable offerings and attach price books for packaging experiments.',
+    description: 'Model your offerings and attach packaging experiments.',
     href: '/products',
-    helpHref: '#',
   },
   {
     id: 'pricing',
     title: 'Create Pricing Models (Flat / Tiered / Usage-based)',
-    description: 'Stand up price entries across flat, tiered, and usage-based strategies.',
+    description: 'Stand up flat, tiered, or usage-based price definitions for each product.',
     href: '/pricing',
-    helpHref: '#',
   },
   {
     id: 'webhooks',
     title: 'Configure Webhooks (event delivery)',
-    description: 'Subscribe delivery endpoints to billing events with signing secrets.',
+    description: 'Subscribe delivery endpoints and signing secrets for billing events.',
     href: '/webhooks',
-    helpHref: '#',
   },
   {
-    id: 'usage-inspector',
-    title: 'Send a Test Usage Event (via the API)',
-    description: 'Verify ingestion and metering by emitting a representative usage event.',
-    href: '/usage-inspector',
-    helpHref: '#',
+    id: 'usage',
+    title: 'Send Test Usage Event',
+    description: 'Emit a representative usage event to validate ingestion.',
+    href: '/usage',
   },
   {
     id: 'subscriptions',
-    title: 'Create a Test Subscription',
-    description: 'Activate a customer on a plan to validate lifecycle, proration, and invoicing.',
+    title: 'Create Test Subscription',
+    description: 'Activate a customer on a plan to validate lifecycle and proration.',
     href: '/subscriptions',
-    helpHref: '#',
   },
   {
     id: 'invoices',
-    title: 'Review the Generated Invoice',
-    description: 'Confirm charges, taxes, and payment statuses from a generated invoice run.',
+    title: 'Review Invoice',
+    description: 'Confirm charges, taxes, and payment states from a generated invoice run.',
     href: '/invoices',
-    helpHref: '#',
   },
 ];
 
 const STORAGE_KEY = 'tenant_setup_progress';
 
-const statusCopy: Record<StepStatus, { label: string; variant: 'secondary' | 'outline' | 'default' }> = {
-  pending: { label: 'Pending', variant: 'outline' },
-  'in-progress': { label: 'In Progress', variant: 'secondary' },
-  completed: { label: 'Completed', variant: 'default' },
+const statusCopy: Record<StepStatus, { label: string; badge: 'outline' | 'secondary' | 'default' }> = {
+  pending: { label: 'Pending', badge: 'outline' },
+  'in-progress': { label: 'In progress', badge: 'secondary' },
+  completed: { label: 'Completed', badge: 'default' },
 };
 
-function getDefaultProgress(): Record<string, StepStatus> {
-  return steps.reduce((acc, step, index) => {
-    acc[step.id] = index === 0 ? 'in-progress' : 'pending';
-    return acc;
-  }, {} as Record<string, StepStatus>);
-}
+const defaultProgress: Record<string, StepStatus> = steps.reduce((acc, step) => {
+  acc[step.id] = 'pending';
+  return acc;
+}, {} as Record<string, StepStatus>);
 
 export function TenantSetupAssistant() {
-  const [progress, setProgress] = useState<Record<string, StepStatus>>(getDefaultProgress);
+  const router = useRouter();
+  const [progress, setProgress] = useState<Record<string, StepStatus>>(defaultProgress);
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as Record<string, StepStatus>;
-        setProgress((prev) => ({ ...prev, ...parsed }));
-      } catch (error) {
-        console.error('Unable to read tenant setup progress from localStorage', error);
-      }
+    if (!stored) return;
+    try {
+      const parsed = JSON.parse(stored) as Record<string, StepStatus>;
+      setProgress((prev) => ({ ...prev, ...parsed }));
+    } catch (error) {
+      console.error('Unable to read tenant setup progress from localStorage', error);
     }
   }, []);
 
@@ -121,125 +109,128 @@ export function TenantSetupAssistant() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
   }, [progress]);
 
-  const completedCount = useMemo(
+  const completedSteps = useMemo(
     () => Object.values(progress).filter((status) => status === 'completed').length,
     [progress],
   );
-  const progressPercent = Math.round((completedCount / steps.length) * 100);
+  const completionPercent = Math.round((completedSteps / steps.length) * 100);
 
-  const updateStatus = (id: string, status: StepStatus) => {
-    setProgress((prev) => ({ ...prev, [id]: status }));
+  const handleOpen = (stepId: string, href: string) => {
+    setProgress((prev) => ({ ...prev, [stepId]: prev[stepId] === 'completed' ? 'completed' : 'in-progress' }));
+    router.push(href);
+  };
+
+  const markComplete = (stepId: string) => {
+    setProgress((prev) => ({ ...prev, [stepId]: prev[stepId] === 'completed' ? 'pending' : 'completed' }));
   };
 
   return (
-    <Card className="border-primary/10 bg-muted/30 shadow-sm">
-      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <CardTitle className="text-lg font-semibold">Tenant Setup Assistant</CardTitle>
-          <CardDescription>
+    <Card className="overflow-hidden rounded-3xl border border-primary/10 bg-muted/30 shadow-sm">
+      <CardHeader className="flex flex-col gap-4 border-b bg-gradient-to-r from-background to-primary/5 p-6 md:flex-row md:items-center md:justify-between">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Badge variant="secondary" className="rounded-full">Enterprise ready</Badge>
+            <span className="inline-flex items-center gap-1 rounded-full bg-background px-2 py-1 text-[11px] font-medium text-foreground shadow-sm">
+              Guided onboarding
+            </span>
+          </div>
+          <CardTitle className="text-2xl font-semibold text-foreground">Tenant Setup Assistant</CardTitle>
+          <CardDescription className="text-base">
             Activate your SmallBiznis billing environment with guided, enterprise-ready tasks.
           </CardDescription>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="text-right">
-            <p className="text-xs uppercase tracking-[0.08em] text-muted-foreground">Completion</p>
-            <p className="text-lg font-semibold text-foreground">{progressPercent}%</p>
+        <div className="flex flex-col gap-3 md:min-w-[280px]">
+          <div className="flex items-center justify-between text-sm font-medium text-foreground">
+            <span>Completion</span>
+            <span>{completionPercent}%</span>
           </div>
-          <div className="w-28 sm:w-40">
-            <Progress value={progressPercent} aria-label="Tenant setup completion" />
-          </div>
-          <Badge variant="secondary" className="gap-1">
-            <ShieldCheck className="h-4 w-4" /> Enterprise ready
-          </Badge>
+          <Progress value={completionPercent} aria-label="Tenant setup completion" className="h-2" />
+          <p className="text-xs text-muted-foreground">{completedSteps} of {steps.length} steps completed</p>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+
+      <CardContent className="p-0">
+        <div className="divide-y divide-border/80">
           {steps.map((step, index) => {
             const status = progress[step.id] ?? 'pending';
-            const statusMeta = statusCopy[status];
+            const meta = statusCopy[status];
 
             return (
-              <div
-                key={step.id}
-                className="group relative flex h-full flex-col rounded-lg border bg-background p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition hover:border-primary/50 hover:shadow-md"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Badge variant="outline" className="rounded-full text-[11px]">
+              <div key={step.id} className="p-4 transition hover:bg-muted/40 md:p-5">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <div className="flex flex-1 flex-col gap-2">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                      <Badge variant="outline" className="rounded-full px-3 py-1 text-[11px]">
                         Step {index + 1}
                       </Badge>
-                      <Badge variant={statusMeta.variant}>{statusMeta.label}</Badge>
+                      <Badge variant={meta.badge} className="rounded-full px-3 py-1 text-[11px]">
+                        {meta.label}
+                      </Badge>
                     </div>
-                    <p className="text-base font-semibold text-foreground">{step.title}</p>
-                    <p className="text-sm text-muted-foreground">{step.description}</p>
+                    <div className="space-y-1">
+                      <p className="text-base font-semibold text-foreground md:text-lg">{step.title}</p>
+                      <p className="text-sm text-muted-foreground">{step.description}</p>
+                    </div>
                   </div>
-                  {status === 'completed' ? <CheckCircle2 className="h-5 w-5 text-green-600" /> : null}
-                </div>
 
-                <div className="mt-4 space-y-3">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Button asChild size="sm" onClick={() => updateStatus(step.id, 'in-progress')}>
-                      <Link href={step.href} className="inline-flex items-center gap-1">
+                  <div className="flex flex-col items-stretch gap-2 text-sm md:w-[320px] md:flex-row md:items-center md:justify-end">
+                    <Button
+                      size="sm"
+                      className="h-10 rounded-full bg-indigo-600 px-4 text-white shadow-sm hover:bg-indigo-500"
+                      onClick={() => handleOpen(step.id, step.href)}
+                    >
+                      <span className="flex items-center gap-2">
                         Open
                         <ArrowUpRight className="h-4 w-4" />
-                      </Link>
+                      </span>
                     </Button>
-                    {status !== 'completed' ? (
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        className="gap-2"
-                        onClick={() => updateStatus(step.id, 'completed')}
-                      >
-                        <CheckCircle2 className="h-4 w-4" />
-                        Mark complete
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="gap-2"
-                        onClick={() => updateStatus(step.id, 'in-progress')}
-                      >
-                        <Clock3 className="h-4 w-4" />
-                        Reopen step
-                      </Button>
-                    )}
-                    <Button asChild variant="link" size="sm" className="text-primary/80">
-                      <Link href={step.helpHref}>Learn more</Link>
-                    </Button>
-                  </div>
-
-                  <Separator className="bg-border/60" />
-
-                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <div
-                      className={cn('flex h-9 w-9 items-center justify-center rounded-full border', {
-                        'border-green-200 bg-green-50 text-green-700': status === 'completed',
-                        'border-primary/30 bg-primary/5 text-primary': status === 'in-progress',
-                        'border-muted bg-muted/60 text-muted-foreground': status === 'pending',
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={cn('h-10 rounded-full border border-dashed px-4 text-foreground', {
+                        'border-primary/50 text-primary': status === 'completed',
                       })}
+                      onClick={() => markComplete(step.id)}
                     >
                       {status === 'completed' ? (
-                        <CheckCircle2 className="h-5 w-5" />
-                      ) : status === 'in-progress' ? (
-                        <ArrowUpRight className="h-5 w-5" />
+                        <span className="flex items-center gap-2">
+                          <Check className="h-4 w-4" /> Completed
+                        </span>
                       ) : (
-                        <PauseCircle className="h-5 w-5" />
+                        <span className="flex items-center gap-2">
+                          <CheckCircle2 className="h-4 w-4" /> Mark complete
+                        </span>
                       )}
-                    </div>
-                    <div className="space-y-[2px]">
-                      <p className="font-medium text-foreground">{statusCopy[status].label}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {status === 'pending'
-                          ? 'Not started yet'
-                          : status === 'in-progress'
-                            ? 'Work is underway — follow the Open link to complete the action.'
-                            : 'Task completed. You can revisit or reopen if needed.'}
-                      </p>
-                    </div>
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="mt-4 flex items-center gap-3 rounded-2xl bg-muted/50 p-3 text-xs text-muted-foreground">
+                  <div
+                    className={cn(
+                      'flex h-9 w-9 items-center justify-center rounded-full border bg-background shadow-inner',
+                      status === 'completed' && 'border-green-200 text-green-700',
+                      status === 'in-progress' && 'border-primary/40 text-primary',
+                      status === 'pending' && 'border-muted text-muted-foreground',
+                    )}
+                  >
+                    {status === 'completed' ? (
+                      <Check className="h-4 w-4" />
+                    ) : status === 'in-progress' ? (
+                      <Clock3 className="h-4 w-4" />
+                    ) : (
+                      <ArrowUpRight className="h-4 w-4" />
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    <p className="font-medium text-foreground">{meta.label}</p>
+                    <p>
+                      {status === 'pending'
+                        ? 'Ready to start — open the step to begin configuration.'
+                        : status === 'in-progress'
+                          ? 'Continue setup and complete the checklist when finished.'
+                          : 'Completed. You can revisit or reopen if needed.'}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -247,6 +238,16 @@ export function TenantSetupAssistant() {
           })}
         </div>
       </CardContent>
+      <Separator className="bg-border/80" />
+      <div className="flex flex-col gap-3 p-5 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
+        <div>
+          Keep this checklist handy as you launch tenants across sandbox and production environments.
+        </div>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Badge variant="secondary" className="rounded-full">Stripe-inspired onboarding</Badge>
+          <Badge variant="outline" className="rounded-full">Progress saved locally</Badge>
+        </div>
+      </div>
     </Card>
   );
 }

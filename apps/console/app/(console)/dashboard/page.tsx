@@ -1,11 +1,12 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 
 import DashboardCard from '@/components/dashboard-card';
 import { FeatureEnablementGuide } from '@/components/dashboard/feature-enablement-guide';
 import { TenantSetupAssistant } from '@/components/dashboard/tenant-setup-assistant';
+import { GettingStartedStripe } from '@/components/dashboard/getting-started-stripe';
 import { Alert, AlertDescription, AlertTitle } from '@smallbiznis/ui/alert';
 import { Badge } from '@smallbiznis/ui/badge';
 import { Button } from '@smallbiznis/ui/button';
@@ -109,6 +110,8 @@ function useAPIKeys() {
 function useWebhooks() {
   return useMemo(() => ({ healthy: 7, failing: 1, medianLatency: '380ms', retriesQueued: 12 }), []);
 }
+
+const totalSetupSteps = 9;
 
 function EnterpriseInsights() {
   const billingProfile = useBillingProfile();
@@ -263,17 +266,46 @@ function EnterpriseInsights() {
 }
 
 export default function DashboardPage() {
+  const [setupCompletion, setSetupCompletion] = useState<number>(0);
+
+  useEffect(() => {
+    const stored = typeof window !== 'undefined' ? localStorage.getItem('tenant_setup_progress') : null;
+    if (!stored) return;
+    try {
+      const parsed = JSON.parse(stored) as Record<string, string>;
+      const completed = Object.values(parsed).filter((status) => status === 'completed').length;
+      setSetupCompletion(Math.round((completed / totalSetupSteps) * 100));
+    } catch (error) {
+      console.error('Unable to read setup progress', error);
+    }
+  }, []);
+
   return (
-    <div className="space-y-6">
-      <div className="space-y-1">
-        <p className="text-sm font-medium text-muted-foreground">Tenant billing console</p>
-        <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Monitor revenue, subscriptions, and tenant health from a single pane of glass.
-        </p>
-      </div>
+    <div className="space-y-8">
+      <section className="rounded-3xl border border-border/70 bg-gradient-to-r from-background via-primary/5 to-background p-6 shadow-sm">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-primary">Tenant billing console</p>
+            <h1 className="text-3xl font-semibold text-foreground">Dashboard</h1>
+            <p className="max-w-2xl text-sm text-muted-foreground">
+              Monitor revenue, subscriptions, and tenant health from a single pane of glass.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3 text-sm">
+            <Badge variant="secondary" className="rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-200">
+              Sandbox
+            </Badge>
+            <Badge variant="outline" className="rounded-full">v1.0</Badge>
+            <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-primary">
+              <ArrowUpRight className="h-4 w-4" /> Setup {setupCompletion || 30}% complete
+            </span>
+          </div>
+        </div>
+      </section>
 
       <TenantSetupAssistant />
+
+      <GettingStartedStripe />
 
       <FeatureEnablementGuide />
 
