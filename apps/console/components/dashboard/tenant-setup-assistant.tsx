@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation';
 
 import { Badge } from '@smallbiznis/ui/badge';
 import { Button } from '@smallbiznis/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@smallbiznis/ui/card';
+import { Card, CardDescription, CardTitle } from '@smallbiznis/ui/card';
 import { Progress } from '@smallbiznis/ui/progress';
 import { Separator } from '@smallbiznis/ui/separator';
 import { cn } from '@smallbiznis/ui/utils';
-import { ArrowUpRight, Check, CheckCircle2, Clock3 } from 'lucide-react';
+import { ArrowUpRight, Check, CheckCircle2 } from 'lucide-react';
 
 type StepStatus = 'pending' | 'in-progress' | 'completed';
 
@@ -125,130 +125,93 @@ export function TenantSetupAssistant() {
   };
 
   return (
-    <Card className="overflow-hidden rounded-3xl border border-primary/10 bg-muted/30 shadow-sm">
-      <CardHeader className="flex flex-col gap-4 border-b bg-gradient-to-r from-background to-primary/5 p-6 md:flex-row md:items-center md:justify-between">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Badge variant="secondary" className="rounded-full">Enterprise ready</Badge>
-            <span className="inline-flex items-center gap-1 rounded-full bg-background px-2 py-1 text-[11px] font-medium text-foreground shadow-sm">
-              Guided onboarding
-            </span>
+    <div className="bg-muted/30 p-4 md:p-8">
+      <Card className="overflow-hidden rounded-3xl border border-border/80 shadow-sm">
+        <div className="space-y-8 p-8">
+          <div className="space-y-3">
+            <CardTitle className="text-2xl font-semibold tracking-tight text-foreground">Tenant Setup Assistant</CardTitle>
+            <CardDescription className="max-w-xl text-sm text-muted-foreground">
+              Activate your SmallBiznis billing environment with guided, enterprise-ready tasks.
+            </CardDescription>
           </div>
-          <CardTitle className="text-2xl font-semibold text-foreground">Tenant Setup Assistant</CardTitle>
-          <CardDescription className="text-base">
-            Activate your SmallBiznis billing environment with guided, enterprise-ready tasks.
-          </CardDescription>
-        </div>
-        <div className="flex flex-col gap-3 md:min-w-[280px]">
-          <div className="flex items-center justify-between text-sm font-medium text-foreground">
-            <span>Completion</span>
-            <span>{completionPercent}%</span>
+
+          <div className="space-y-2">
+            <div className="flex items-center gap-3 text-sm font-medium text-foreground">
+              <span>Progress</span>
+              <span className="ml-auto text-sm font-semibold">{completionPercent}%</span>
+            </div>
+            <Progress value={completionPercent} aria-label="Tenant setup completion" className="h-2" />
+            <p className="text-xs text-muted-foreground">{completedSteps} of {steps.length} steps completed</p>
           </div>
-          <Progress value={completionPercent} aria-label="Tenant setup completion" className="h-2" />
-          <p className="text-xs text-muted-foreground">{completedSteps} of {steps.length} steps completed</p>
-        </div>
-      </CardHeader>
 
-      <CardContent className="p-0">
-        <div className="divide-y divide-border/80">
-          {steps.map((step, index) => {
-            const status = progress[step.id] ?? 'pending';
-            const meta = statusCopy[status];
+          <div className="space-y-4">
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-foreground">Setup checklist</p>
+              <p className="text-sm text-muted-foreground">
+                Complete each step to finalize your tenant billing workspace.
+              </p>
+            </div>
 
-            return (
-              <div key={step.id} className="p-4 transition hover:bg-muted/40 md:p-5">
-                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                  <div className="flex flex-1 flex-col gap-2">
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                      <Badge variant="outline" className="rounded-full px-3 py-1 text-[11px]">
-                        Step {index + 1}
-                      </Badge>
-                      <Badge variant={meta.badge} className="rounded-full px-3 py-1 text-[11px]">
-                        {meta.label}
-                      </Badge>
+            <div className="space-y-0">
+              {steps.map((step, index) => {
+                const status = progress[step.id] ?? 'pending';
+                const meta = statusCopy[status];
+
+                return (
+                  <div key={step.id}>
+                    <div className="flex flex-col gap-4 px-4 py-6 md:flex-row md:items-start md:justify-between">
+                      <div className="flex flex-1 flex-col gap-3">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <span className="text-xs text-muted-foreground">Step {index + 1}</span>
+                          <Badge variant={meta.badge} className="rounded-full px-2.5 py-0.5 text-xs">
+                            {meta.label}
+                          </Badge>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-base font-medium text-foreground">{step.title}</p>
+                          <p className="text-sm text-muted-foreground">{step.description}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex w-full flex-col items-end gap-2 md:w-auto">
+                        <Button
+                          className="bg-indigo-600 px-4 text-white shadow-sm hover:bg-indigo-500"
+                          onClick={() => handleOpen(step.id, step.href)}
+                        >
+                          <span className="flex items-center gap-2">
+                            Open
+                            <ArrowUpRight className="h-4 w-4" />
+                          </span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={cn('text-sm text-muted-foreground hover:text-foreground', {
+                            'text-primary': status === 'completed',
+                          })}
+                          onClick={() => markComplete(step.id)}
+                        >
+                          {status === 'completed' ? (
+                            <span className="flex items-center gap-2">
+                              <Check className="h-4 w-4" /> Completed
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-2">
+                              <CheckCircle2 className="h-4 w-4" /> Mark complete
+                            </span>
+                          )}
+                        </Button>
+                      </div>
                     </div>
-                    <div className="space-y-1">
-                      <p className="text-base font-semibold text-foreground md:text-lg">{step.title}</p>
-                      <p className="text-sm text-muted-foreground">{step.description}</p>
-                    </div>
+                    {index < steps.length - 1 && <Separator />}
                   </div>
-
-                  <div className="flex flex-col items-stretch gap-2 text-sm md:w-[320px] md:flex-row md:items-center md:justify-end">
-                    <Button
-                      size="sm"
-                      className="h-10 rounded-full bg-indigo-600 px-4 text-white shadow-sm hover:bg-indigo-500"
-                      onClick={() => handleOpen(step.id, step.href)}
-                    >
-                      <span className="flex items-center gap-2">
-                        Open
-                        <ArrowUpRight className="h-4 w-4" />
-                      </span>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={cn('h-10 rounded-full border border-dashed px-4 text-foreground', {
-                        'border-primary/50 text-primary': status === 'completed',
-                      })}
-                      onClick={() => markComplete(step.id)}
-                    >
-                      {status === 'completed' ? (
-                        <span className="flex items-center gap-2">
-                          <Check className="h-4 w-4" /> Completed
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-2">
-                          <CheckCircle2 className="h-4 w-4" /> Mark complete
-                        </span>
-                      )}
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex items-center gap-3 rounded-2xl bg-muted/50 p-3 text-xs text-muted-foreground">
-                  <div
-                    className={cn(
-                      'flex h-9 w-9 items-center justify-center rounded-full border bg-background shadow-inner',
-                      status === 'completed' && 'border-green-200 text-green-700',
-                      status === 'in-progress' && 'border-primary/40 text-primary',
-                      status === 'pending' && 'border-muted text-muted-foreground',
-                    )}
-                  >
-                    {status === 'completed' ? (
-                      <Check className="h-4 w-4" />
-                    ) : status === 'in-progress' ? (
-                      <Clock3 className="h-4 w-4" />
-                    ) : (
-                      <ArrowUpRight className="h-4 w-4" />
-                    )}
-                  </div>
-                  <div className="space-y-1">
-                    <p className="font-medium text-foreground">{meta.label}</p>
-                    <p>
-                      {status === 'pending'
-                        ? 'Ready to start — open the step to begin configuration.'
-                        : status === 'in-progress'
-                          ? 'Continue setup and complete the checklist when finished.'
-                          : 'Completed. You can revisit or reopen if needed.'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+                );
+              })}
+            </div>
+          </div>
         </div>
-      </CardContent>
-      <Separator className="bg-border/80" />
-      <div className="flex flex-col gap-3 p-5 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
-        <div>
-          Keep this checklist handy as you launch tenants across sandbox and production environments.
-        </div>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Badge variant="secondary" className="rounded-full">Stripe-inspired onboarding</Badge>
-          <Badge variant="outline" className="rounded-full">Progress saved locally</Badge>
-        </div>
-      </div>
-    </Card>
+      </Card>
+    </div>
   );
 }
 
