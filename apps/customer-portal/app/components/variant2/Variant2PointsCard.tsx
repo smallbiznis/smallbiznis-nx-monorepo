@@ -1,5 +1,5 @@
 import { TrendingUp, Sparkles } from "lucide-react";
-import { Card } from "@smallbiznis/ui/components";
+import { Card } from "@smallbiznis/ui";
 import { motion } from "motion/react";
 
 export function Variant2PointsCard() {

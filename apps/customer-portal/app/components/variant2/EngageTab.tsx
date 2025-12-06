@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@smallbiznis/ui/components";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@smallbiznis/ui";
 import { Target, Gift, Users, Trophy } from "lucide-react";
 import { ChallengesTab } from "./ChallengesTab";
 import { DailySpinWheel } from "./DailySpinWheel";

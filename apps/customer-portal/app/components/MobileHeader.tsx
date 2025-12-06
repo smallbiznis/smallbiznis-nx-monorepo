@@ -1,7 +1,7 @@
 import { Bell, Gift } from "lucide-react";
-import { Button } from "@smallbiznis/ui/components";
-import { Badge } from "@smallbiznis/ui/components";
-import { Avatar, AvatarFallback } from "@smallbiznis/ui/components";
+import { Button } from "@smallbiznis/ui";
+import { Badge } from "@smallbiznis/ui";
+import { Avatar, AvatarFallback } from "@smallbiznis/ui";
 
 export function MobileHeader() {
   return (

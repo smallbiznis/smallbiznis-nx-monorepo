@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Button } from '@smallbiznis/ui/components';
+import { Button } from '@smallbiznis/ui';
 import {
   ArrowRight,
   Workflow,

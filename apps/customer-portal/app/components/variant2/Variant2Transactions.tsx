@@ -1,5 +1,5 @@
 import { ArrowUpRight, ArrowDownRight, Clock } from "lucide-react";
-import { Badge } from "@smallbiznis/ui/components";
+import { Badge } from "@smallbiznis/ui";
 import { motion } from "motion/react";
 
 const transactions = [

@@ -6,11 +6,7 @@
     "emitDeclarationOnly": false,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
@@ -21,20 +17,21 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     },
-    "types": [
-      "jest",
-      "node"
-    ],
     "outDir": "dist",
     "rootDir": "."
   },
   "include": [
-    "../../apps/console/.next/types/**/*.ts",
-    "../../dist/apps/console/.next/types/**/*.ts",
+    "../../apps/auth/.next/types/**/*.ts",
+    "../../dist/apps/auth/.next/types/**/*.ts",
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "hooks/**/*.ts",
+    "hooks/**/*.tsx",
+    "lib/**/*.ts",
+    "lib/**/*.tsx",
+    "messages/**/*.json",
     "app/**/*.js",
     "app/**/*.jsx",
     "app/**/*.ts",
@@ -50,11 +47,14 @@
     "jest.config.cts",
     "app/**/*.spec.ts",
     "app/**/*.test.ts",
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts",
     ".next",
     "eslint.config.js",
     "eslint.config.cjs",
     "eslint.config.mjs"
+  ],
+  "references": [
+    {
+      "path": "../../packages/ui"
+    },
   ]
 }

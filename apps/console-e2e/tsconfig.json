@@ -16,5 +16,11 @@
     "**/*.cy.jsx",
     "**/*.d.ts"
   ],
-  "exclude": ["out-tsc", "test-output"]
+  "exclude": [
+    "out-tsc",
+    "test-output",
+    "eslint.config.js",
+    "eslint.config.cjs",
+    "eslint.config.mjs"
+  ]
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Card } from "@smallbiznis/ui/components";
-import { Button } from "@smallbiznis/ui/components";
-import { Badge } from "@smallbiznis/ui/components";
+import { Card } from "@smallbiznis/ui";
+import { Button } from "@smallbiznis/ui";
+import { Badge } from "@smallbiznis/ui";
 import { Gift, Sparkles, Trophy, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 

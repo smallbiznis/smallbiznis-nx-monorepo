@@ -1,6 +1,6 @@
-import { Card } from "@smallbiznis/ui/components";
-import { Progress } from "@smallbiznis/ui/components";
-import { Badge } from "@smallbiznis/ui/components";
+import { Card } from "@smallbiznis/ui";
+import { Progress } from "@smallbiznis/ui";
+import { Badge } from "@smallbiznis/ui";
 import { Target, Zap, Gift, TrendingUp, Clock, Trophy } from "lucide-react";
 import { motion } from "motion/react";
 

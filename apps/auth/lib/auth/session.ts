@@ -1,9 +1,6 @@
 import { cookies } from "next/headers";
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:crypto";
-import { db } from "@/lib/db/client";
-import { tenantUsers, users } from "@/lib/db/schema";
 import { extractTenantIdValue, readTenantFromRequest } from "@/lib/tenant/context";
-import { and, eq } from "drizzle-orm";
 
 const SESSION_COOKIE_NAME = "sb_session";
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
@@ -86,29 +83,7 @@ export async function getSessionUser(req: Request): Promise<SessionUser | null> 
     return null;
   }
 
-  const [record] = await db
-    .select({
-      id: users.id,
-      email: users.email,
-      name: users.name,
-      tenantId: tenantUsers.tenantId,
-    })
-    .from(tenantUsers)
-    .innerJoin(users, eq(tenantUsers.userId, users.id))
-    .where(and(eq(tenantUsers.tenantId, tenantId), eq(users.id, userId)))
-    .limit(1);
-
-  if (!record) {
-    await destroySession(req);
-    return null;
-  }
-
-  return {
-    id: toNumber(record.id),
-    email: record.email,
-    name: record.name ?? null,
-    tenantId: toNumber(record.tenantId),
-  };
+  return null
 }
 
 function readSessionPayload(req: Request): SessionPayload | null {

@@ -1,5 +1,5 @@
 
-import { Card } from "@smallbiznis/ui/components";
+import { Card } from "@smallbiznis/ui";
 import { Trophy, Star, Zap, Crown, Target, Users, Gift, TrendingUp, Badge } from "lucide-react";
 import { motion } from "motion/react";
 

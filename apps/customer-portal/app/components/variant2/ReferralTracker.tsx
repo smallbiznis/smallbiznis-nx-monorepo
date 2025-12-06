@@ -1,7 +1,7 @@
-import { Card } from "@smallbiznis/ui/components";
-import { Button } from "@smallbiznis/ui/components";
-import { Badge } from "@smallbiznis/ui/components";
-import { Progress } from "@smallbiznis/ui/components";
+import { Card } from "@smallbiznis/ui";
+import { Button } from "@smallbiznis/ui";
+import { Badge } from "@smallbiznis/ui";
+import { Progress } from "@smallbiznis/ui";
 import { Users, Gift, Share2, Copy, Check } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";

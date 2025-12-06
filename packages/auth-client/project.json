@@ -1,0 +1,14 @@
+{
+  "name": "@smallbiznis/auth-client",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{projectRoot}/dist"],
+      "options": {
+        "tsConfig": "packages/auth-client/tsconfig.lib.json",
+        "outputPath": "packages/auth-client/dist",
+        "main": "packages/auth-client/src/index.ts"
+      }
+    }
+  }
+}

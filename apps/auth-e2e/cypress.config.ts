@@ -1,16 +1,23 @@
-import { nxE2EPreset } from '@nx/cypress/plugins/cypress-preset';
-import { defineConfig } from 'cypress';
+import { nxE2EPreset } from "@nx/cypress/plugins/cypress-preset";
+import { defineConfig } from "cypress";
 
 export default defineConfig({
   e2e: {
     ...nxE2EPreset(__filename, {
-      cypressDir: 'src',
+      cypressDir: "src",
       webServerCommands: {
-        default: 'npx nx run auth:dev',
+        default: "npx nx run auth:dev",
       },
-      ciWebServerCommand: 'npx nx run auth:start',
-      ciBaseUrl: 'http://localhost:3000',
+      ciWebServerCommand: "npx nx run auth:start",
+      ciBaseUrl: "http://localhost:3000",
     }),
-    baseUrl: 'http://127.0.0.1:3000',
+    baseUrl: "http://127.0.0.1:3000",
+  },
+
+  component: {
+    devServer: {
+      framework: "next",
+      bundler: "webpack",
+    },
   },
 });

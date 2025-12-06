@@ -1,5 +1,5 @@
-import { Card } from "@smallbiznis/ui/components";
-import { Progress } from "@smallbiznis/ui/components";
+import { Card } from "@smallbiznis/ui";
+import { Progress } from "@smallbiznis/ui";
 import { Trophy, Crown, Gem, Star, Check } from "lucide-react";
 import { motion } from "motion/react";
 

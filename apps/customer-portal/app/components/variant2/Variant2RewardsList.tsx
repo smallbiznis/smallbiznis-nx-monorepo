@@ -1,5 +1,5 @@
 
-import { Card, Button, Badge } from "@smallbiznis/ui/components";
+import { Card, Button, Badge } from "@smallbiznis/ui";
 import { Coffee, Gift, ShoppingBag, Percent, Star, Headphones, Smartphone } from "lucide-react";
 import { motion } from "motion/react";
 

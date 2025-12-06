@@ -2,7 +2,7 @@ import { Bell, Zap } from "lucide-react";
 import {
   Avatar, AvatarFallback,
   Button, Badge,
-} from '@smallbiznis/ui/components'
+} from '@smallbiznis/ui'
 
 export function Variant2Header() {
   return (

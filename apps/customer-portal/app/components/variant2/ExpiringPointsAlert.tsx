@@ -1,4 +1,4 @@
-import { Card, Button } from '@smallbiznis/ui/components'
+import { Card, Button } from '@smallbiznis/ui'
 import { AlertCircle, Clock } from "lucide-react";
 import { motion } from "motion/react";
 

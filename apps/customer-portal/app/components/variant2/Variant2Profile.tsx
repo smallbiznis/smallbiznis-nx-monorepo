@@ -1,7 +1,7 @@
-import { Card } from "@smallbiznis/ui/components";
-import { Button } from "@smallbiznis/ui/components";
+import { Card } from "@smallbiznis/ui";
+import { Button } from "@smallbiznis/ui";
 import { Avatar, AvatarFallback } from "../ui/avatar";
-import { Switch } from "@smallbiznis/ui/components";
+import { Switch } from "@smallbiznis/ui";
 import { 
   Mail, 
   Phone, 

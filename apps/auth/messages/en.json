@@ -1,0 +1,208 @@
+{
+  "Home": {
+    "badge": "Auth",
+    "title": "Enterprise authentication portal for every tenant.",
+    "subtitle": "Use password, OTP, or OAuth 2.0 flows backed by your existing auth service. All calls are proxied through the shared AuthClient.",
+    "primaryCta": "Sign in now",
+    "secondaryCta": "Create tenant account",
+    "flowTitle": "Complete flow",
+    "flowDescription": "Every backend endpoint is available through our shared client.",
+    "steps": [
+      "Password login > store secure httpOnly cookies",
+      "OTP request/verify for passwordless",
+      "OAuth authorize → callback → token exchange → redirect",
+      "Middleware validates sessions via /auth/me"
+    ],
+    "features": [
+      {
+        "title": "Password & OTP",
+        "description": "Forms interact directly with the auth service for login, registration, and OTP verification."
+      },
+      {
+        "title": "OAuth 2.0 + PKCE",
+        "description": "Secure authorization-code flow with automatic PKCE storage and callback handling."
+      },
+      {
+        "title": "Device ready",
+        "description": "Responsive UI built with Tailwind and shadcn/ui components for every screen."
+      }
+    ]
+  },
+  "OAuthError": {
+    "hero": {
+      "title": "We couldn't complete the OAuth request",
+      "description": "The identity provider reported an error while handling your authentication flow. Review the details below and try again.",
+      "highlights": [
+        "Verify the client ID and redirect URI registration",
+        "Ensure the requested scopes are allowed for this application",
+        "Contact your tenant admin if the issue persists"
+      ],
+      "footer": "Back to <home>home</home>"
+    },
+    "card": {
+      "title": "Error details",
+      "description": "Share this information with your administrator if you need assistance.",
+      "errorCode": "Error code",
+      "descriptionLabel": "Description"
+    },
+    "actions": {
+      "signIn": "Return to sign in",
+      "home": "Go to dashboard home"
+    }
+  },
+  "Login": {
+    "tabs": {
+      "login": "Login",
+      "register": "Sign Up"
+    },
+    "card": {
+      "title": "Sign in to continue",
+      "subtitle": "Choose a provider below or enter your credentials."
+    },
+    "divider": "or",
+    "footerText": "Need an account?",
+    "footerLink": "Create one",
+    "form": {
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@company.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "submit": "Sign in",
+      "submitting": "Signing in..."
+    }
+  },
+  "Register": {
+    "tabs": {
+      "login": "Login",
+      "register": "Sign Up"
+    },
+    "card": {
+      "title": "Create your account",
+      "subtitle": "Enter your details to create a tenant workspace."
+    },
+    "divider": "or",
+    "footerText": "Already have an account?",
+    "footerLink": "Login",
+    "form": {
+      "nameLabel": "Full name",
+      "emailLabel": "Work email",
+      "passwordLabel": "Password",
+      "submit": "Create account",
+      "submitting": "Creating account..."
+    }
+  },
+  "ForgotPassword": {
+    "hero": {
+      "title": "Reset your password in seconds",
+      "description": "Submit your email and we'll send a secure link that expires in 15 minutes.",
+      "highlights": [
+        "Encrypted reset links with device fingerprinting",
+        "Real-time monitoring of reset attempts",
+        "Supports multi-tenant, multi-domain deployments"
+      ]
+    },
+    "card": {
+      "title": "Send reset instructions",
+      "description": "Enter the email associated with your account."
+    },
+    "footer": {
+      "remembered": "Remember your password?",
+      "login": "Return to sign in"
+    },
+    "form": {
+      "emailLabel": "Email",
+      "submit": "Send reset instructions",
+      "submitting": "Sending...",
+      "success": "Request sent. Check your inbox."
+    }
+  },
+  "Otp": {
+    "hero": {
+      "title": "Passwordless access",
+      "description": "Enter the 6-digit OTP we sent to your inbox or phone. Codes expire in 60 seconds.",
+      "highlights": [
+        "Each OTP is unique and encrypted",
+        "Automatic throttling on suspicious attempts",
+        "Complete audit trail for security teams"
+      ],
+      "footer": "Need another code? <link>Request a new OTP</link>"
+    },
+    "card": {
+      "title": "Verify code",
+      "description": "Type the email and OTP you received."
+    },
+    "tips": {
+      "title": "Security tips",
+      "items": [
+        "Never share the code with anyone, including our team.",
+        "Verify the email destination before requesting another OTP.",
+        "Contact your tenant admin if you see unusual activity."
+      ]
+    },
+    "form": {
+      "emailLabel": "Email",
+      "otpLabel": "OTP Code",
+      "submit": "Verify & sign in",
+      "submitting": "Verifying..."
+    },
+    "footer": {
+      "text": "Didn't receive the OTP?",
+      "link": "Request again"
+    }
+  },
+  "Profile": {
+    "hero": {
+      "title": "Active session profile",
+      "description": "Tokens and cookies are stored securely via server actions. Review the metadata for your current session.",
+      "highlights": [
+        "httpOnly tokens stored on the edge",
+        "Device confirmation & audit trail",
+        "Full tenant isolation per session"
+      ],
+      "footer": "Something wrong? <link>Reset your credentials</link>"
+    },
+    "card": {
+      "title": "User details",
+      "description": "Data fetched directly from /auth/me."
+    },
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "tenantId": "Tenant ID",
+      "userId": "User ID"
+    }
+  },
+  "OAuth": {
+    "listTitle": "Or continue with a provider",
+    "firstParty": "Instant",
+    "thirdParty": "Requires consent",
+    "loading": "Preparing...",
+    "error": "Unable to start the OAuth flow. Please try again.",
+    "dialog": {
+      "title": "Confirm access",
+      "description": "You will be redirected to {provider} to complete sign in. We will request your basic profile information.",
+      "cancel": "Cancel",
+      "confirm": "Allow & continue"
+    }
+  },
+  "Forms": {
+    "errors": {
+      "invalidEmail": "Enter a valid email address.",
+      "emailRequired": "Email is required.",
+      "passwordRequired": "Password must have at least {length} characters.",
+      "nameRequired": "Full name must not be empty.",
+      "otpLength": "OTP must contain 6 digits."
+    },
+    "messages": {
+      "loginInvalid": "Please review the data you provided.",
+      "loginFailed": "Unable to sign in.",
+      "registerInvalid": "Please review the registration data.",
+      "registerFailed": "Unable to complete registration.",
+      "forgotInvalid": "Email is invalid.",
+      "forgotFailed": "Unable to send reset instructions.",
+      "otpInvalid": "OTP is invalid.",
+      "otpFailed": "Unable to verify the OTP."
+    }
+  }
+}

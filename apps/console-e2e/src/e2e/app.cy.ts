@@ -1,6 +1,6 @@
 import { getGreeting } from '../support/app.po';
 
-describe('@smallbiznis/console-e2e', () => {
+describe('console-e2e', () => {
   beforeEach(() => cy.visit('/'));
 
   it('should display welcome message', () => {

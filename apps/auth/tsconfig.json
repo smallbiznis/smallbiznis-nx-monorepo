@@ -6,11 +6,7 @@
     "emitDeclarationOnly": false,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
@@ -21,9 +17,7 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     },
     "outDir": "dist",
     "rootDir": "."
@@ -31,6 +25,13 @@
   "include": [
     "../../apps/auth/.next/types/**/*.ts",
     "../../dist/apps/auth/.next/types/**/*.ts",
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "hooks/**/*.ts",
+    "hooks/**/*.tsx",
+    "lib/**/*.ts",
+    "lib/**/*.tsx",
+    "messages/**/*.json",
     "app/**/*.js",
     "app/**/*.jsx",
     "app/**/*.ts",
@@ -53,10 +54,10 @@
   ],
   "references": [
     {
-      "path": "../../packages/tracking"
+      "path": "../../packages/ui"
     },
     {
-      "path": "../../packages/ui"
+      "path": "../../packages/auth-client"
     }
   ]
 }

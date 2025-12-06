@@ -1,5 +1,5 @@
 {
-  "name": "@smallbiznis/-e2e",
+  "name": "@smallbiznis/auth-e2e",
   "version": "0.0.1",
   "private": true,
   "nx": {
