@@ -10,12 +10,6 @@
       "path": "./apps/console"
     },
     {
-      "path": "./apps/customer-portal-e2e"
-    },
-    {
-      "path": "./apps/customer-portal"
-    },
-    {
       "path": "./packages/ui"
     },
     {
@@ -35,6 +29,9 @@
     },
     {
       "path": "./packages/auth-client"
+    },
+    {
+      "path": "./packages/billing-client"
     }
   ]
 }

@@ -3,7 +3,6 @@
   "compilerOptions": {
     "jsx": "preserve",
     "noEmit": true,
-    "emitDeclarationOnly": false,
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -19,19 +18,13 @@
     "paths": {
       "@/*": ["./*"]
     },
+    "types": ["jest", "node"],
     "outDir": "dist",
     "rootDir": "."
   },
   "include": [
-    "../../apps/auth/.next/types/**/*.ts",
-    "../../dist/apps/auth/.next/types/**/*.ts",
-    "components/**/*.ts",
-    "components/**/*.tsx",
-    "hooks/**/*.ts",
-    "hooks/**/*.tsx",
-    "lib/**/*.ts",
-    "lib/**/*.tsx",
-    "messages/**/*.json",
+    "../../apps/console/.next/types/**/*.ts",
+    "../../dist/apps/console/.next/types/**/*.ts",
     "app/**/*.js",
     "app/**/*.jsx",
     "app/**/*.ts",
@@ -47,6 +40,8 @@
     "jest.config.cts",
     "app/**/*.spec.ts",
     "app/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts",
     ".next",
     "eslint.config.js",
     "eslint.config.cjs",
@@ -54,7 +49,10 @@
   ],
   "references": [
     {
-      "path": "../../packages/ui"
+      "path": "../../packages/billing-client"
     },
+    {
+      "path": "../../packages/ui"
+    }
   ]
 }
