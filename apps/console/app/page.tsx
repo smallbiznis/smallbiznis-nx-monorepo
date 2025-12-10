@@ -87,7 +87,7 @@ const useBillingStore = create((set, get) => ({
     { id: "beta-labs", name: "Beta Labs", role: "Admin", currency_code: "EUR", slug: "beta" },
     { id: "gamma-tech", name: "Gamma Tech", role: "Viewer", currency_code: "IDR", slug: "gamma" }
   ],
-  
+
   stats: {
     mrr: { value: "$124,500", change: 12.5, trend: "up" },
     customers: { value: 1248, change: 8, trend: "up" },
@@ -113,7 +113,7 @@ const useBillingStore = create((set, get) => ({
     if (!org) return;
     
     const client = new BillingClient({
-      baseUrl: "https://api.smallbiznis.dev",
+      baseUrl: "http://localhost:8080",
       tenantId: org.id,
       environment: "live",
       sessionToken: "mock_session_token"

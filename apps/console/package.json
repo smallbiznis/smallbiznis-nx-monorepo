@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@smallbiznis/billing-client": "workspace:*",
+    "@smallbiznis/auth-client": "workspace:*",
     "@smallbiznis/ui": "workspace:*",
     "next": "~15.2.4",
     "react": "^19.0.0",
