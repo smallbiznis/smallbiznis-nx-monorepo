@@ -1,53 +1,55 @@
-// Middleware enforces tenant licensing before any app routes render
 import { NextResponse, type NextRequest } from "next/server"
-import { fetchTenantLicense } from "./lib/license"
 
-// Map feature-specific routes to the license feature flag key
-const featureRouteToLicenseKey: Record<string, string> = {
-  meters: "meter",
-  subscriptions: "subscription",
-  usage: "usage",
+interface SetupStatusResponse {
+  setup_required: boolean
+}
+
+function isIgnoredPath(pathname: string) {
+  return (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/api") ||
+    pathname.startsWith("/favicon.ico") ||
+    pathname.startsWith("/public")
+  )
+}
+
+async function fetchSetupStatus(origin: string): Promise<boolean | null> {
+  try {
+    const response = await fetch(`${origin}/internal/setup-status`, { cache: "no-store" })
+    if (!response.ok) {
+      return null
+    }
+    const payload = (await response.json()) as SetupStatusResponse
+    return Boolean(payload.setup_required)
+  } catch {
+    return null
+  }
 }
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
-  const segments = pathname.split("/").filter(Boolean)
+  const { pathname, origin } = request.nextUrl
 
-  // Expected segments:
-  // ["app", "tenantId", "feature"]
-  if (segments[0] !== "app") {
+  if (isIgnoredPath(pathname)) {
     return NextResponse.next()
   }
 
-  const tenantId = segments[1]
-  const featureRoute = segments[2]
+  const setupRequired = await fetchSetupStatus(origin)
 
-  if (!tenantId) {
+  if (setupRequired === null) {
     return NextResponse.next()
   }
 
-  // Fetch license (server-side)
-  const license = await fetchTenantLicense(tenantId, request.nextUrl.origin)
-
-  if (!license?.valid) {
-    return NextResponse.redirect(new URL("/license/error", request.url))
+  if (setupRequired && !pathname.startsWith("/setup")) {
+    return NextResponse.redirect(new URL("/setup", request.url))
   }
 
-  // Feature gating
-  if (featureRoute) {
-    const featureKey = featureRouteToLicenseKey[featureRoute]
-    if (featureKey && !license.features?.[featureKey]) {
-      const errorUrl = new URL(`/app/${tenantId}/error-license`, request.url)
-      errorUrl.searchParams.set("feature", featureKey)
-      return NextResponse.rewrite(errorUrl)
-    }
+  if (!setupRequired && pathname.startsWith("/setup")) {
+    return NextResponse.redirect(new URL("/login", request.url))
   }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: [
-    "/app/:path*"
-  ],
+  matcher: ["/((?!api|_next|favicon\\.ico|public).*)"],
 }

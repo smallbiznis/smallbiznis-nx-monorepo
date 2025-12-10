@@ -1,8 +1,9 @@
 import { headers } from "next/headers"
-import { redirect, useParams } from "next/navigation"
 import type { ReactNode } from "react"
-import { fetchTenantLicense } from "@/lib/license"
-import { buildNavigation } from "./navigation"
+
+import { FeatureFlagsProvider } from "@/lib/FeatureFlagsProvider"
+import { getTenantFeatureFlags } from "@/lib/feature-flags"
+import { buildNavigation } from "@/lib/navigation"
 import { TenantShell } from "./tenant-shell"
 import { TenantProvider } from "./tenant-providers"
 
@@ -11,24 +12,27 @@ interface TenantLayoutProps {
   params: { tenantId: string }
 }
 
-// Server layout loads license and wraps tenant shell UI
-export default async function TenantLayout({ children, params }: TenantLayoutProps) {
-
-  const { tenantId } = await params
-  const headerList = await headers()
+async function resolveBaseUrl() {
+  const headerList = headers()
   const host = headerList.get("host")
   const protocol = headerList.get("x-forwarded-proto") ?? "http"
-  const license = await fetchTenantLicense(tenantId, host ? `${protocol}://${host}` : undefined)
-
-  if (!license?.valid) {
-    redirect("/license/error")
+  if (host) {
+    return `${protocol}://${host}`
   }
+  return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:4200"
+}
 
-  const navigation = buildNavigation(tenantId, license)
+export default async function TenantLayout({ children, params }: TenantLayoutProps) {
+  const { tenantId } = params
+  const baseUrl = await resolveBaseUrl()
+  const featureFlags = await getTenantFeatureFlags(tenantId, baseUrl)
+  const navigation = buildNavigation(tenantId, featureFlags)
 
   return (
-    <TenantProvider tenantId={tenantId} license={license}>
-      <TenantShell navigation={navigation}>{children}</TenantShell>
+    <TenantProvider tenantId={tenantId}>
+      <FeatureFlagsProvider featureFlags={featureFlags}>
+        <TenantShell navigation={navigation}>{children}</TenantShell>
+      </FeatureFlagsProvider>
     </TenantProvider>
   )
 }

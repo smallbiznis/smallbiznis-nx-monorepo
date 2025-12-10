@@ -117,7 +117,7 @@ export default function DashboardPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Overview</h1>
         <p className="text-muted-foreground text-sm mt-1">
-          Welcome back! Here's what's happening with your billing.
+          Welcome back! Here’s what’s happening with your billing.
         </p>
       </div>
 
