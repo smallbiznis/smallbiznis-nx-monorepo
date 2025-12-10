@@ -1,39 +1,17 @@
 import "./global.css"
 
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
 import type { ReactNode } from "react"
-
-import { LicenseProvider } from "@/lib/LicenseProvider"
-import { getGlobalLicense } from "@/lib/license"
 
 export const metadata = {
   title: "SmallBiznis Tenant Console",
-  description: "Self-hosted tenant console secured by offline licenses",
-}
-
-async function resolveBaseUrl() {
-  const headerList = headers()
-  const host = headerList.get("host")
-  const protocol = headerList.get("x-forwarded-proto") ?? "http"
-  if (host) {
-    return `${protocol}://${host}`
-  }
-  return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:4200"
+  description: "SmallBiznis tenant console",
 }
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const baseUrl = await resolveBaseUrl()
-  const license = await getGlobalLicense(baseUrl)
-
-  if (!license.valid) {
-    redirect("/license/error")
-  }
-
   return (
     <html lang="en">
       <body>
-        <LicenseProvider license={license}>{children}</LicenseProvider>
+        {children}
       </body>
     </html>
   )

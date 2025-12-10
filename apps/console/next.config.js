@@ -18,7 +18,7 @@ const nextConfig = {
     return [
       {
         source: '/internal-admin/:path*',
-        destination: '/license/error',
+        destination: '/',
         permanent: false,
       },
     ];

@@ -1,8 +1,8 @@
 import { headers } from "next/headers"
-import { redirect } from "next/navigation"
 import type { ReactNode } from "react"
 
-import { getGlobalLicense } from "@/lib/license"
+import { FeatureFlagsProvider } from "@/lib/FeatureFlagsProvider"
+import { getTenantFeatureFlags } from "@/lib/feature-flags"
 import { buildNavigation } from "@/lib/navigation"
 import { TenantShell } from "./tenant-shell"
 import { TenantProvider } from "./tenant-providers"
@@ -25,17 +25,14 @@ async function resolveBaseUrl() {
 export default async function TenantLayout({ children, params }: TenantLayoutProps) {
   const { tenantId } = params
   const baseUrl = await resolveBaseUrl()
-  const license = await getGlobalLicense(baseUrl)
-
-  if (!license.valid) {
-    redirect("/license/error")
-  }
-
-  const navigation = buildNavigation(tenantId, license)
+  const featureFlags = await getTenantFeatureFlags(tenantId, baseUrl)
+  const navigation = buildNavigation(tenantId, featureFlags)
 
   return (
     <TenantProvider tenantId={tenantId}>
-      <TenantShell navigation={navigation}>{children}</TenantShell>
+      <FeatureFlagsProvider featureFlags={featureFlags}>
+        <TenantShell navigation={navigation}>{children}</TenantShell>
+      </FeatureFlagsProvider>
     </TenantProvider>
   )
 }

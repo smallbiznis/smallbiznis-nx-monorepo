@@ -16,10 +16,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@smallbiznis/ui/dropdown-menu"
-import { Separator } from "@smallbiznis/ui/separator"
 import { cn } from "@smallbiznis/ui/utils"
 import type { NavigationItem } from "@/lib/navigation"
-import { useLicense } from "@/lib/LicenseProvider"
 import { useTenantId } from "./tenant-providers"
 
 interface TenantShellProps {
@@ -35,7 +33,6 @@ const organizations = [
 export function TenantShell({ navigation, children }: TenantShellProps) {
   const pathname = usePathname()
   const tenantId = useTenantId()
-  const license = useLicense()
 
   const activeOrg = organizations[0]
 
@@ -136,9 +133,7 @@ export function TenantShell({ navigation, children }: TenantShellProps) {
             </Button>
           </div>
 
-          <div className="text-xs text-muted-foreground">
-            Edition: <span className="font-semibold text-foreground capitalize">{license.edition}</span>
-          </div>
+          <div className="text-xs text-muted-foreground">Tenant console</div>
         </div>
 
         <div className="p-3 border-t border-border bg-muted/30">
@@ -175,11 +170,6 @@ export function TenantShell({ navigation, children }: TenantShellProps) {
             <div>
               <p className="text-sm text-muted-foreground">Tenant</p>
               <h1 className="text-2xl font-semibold tracking-tight">{tenantId}</h1>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="rounded-full border px-3 py-1">{license.edition} edition</span>
-              <Separator orientation="vertical" className="h-6" />
-              <span className="rounded-full border px-3 py-1">License valid</span>
             </div>
           </header>
           {children}
