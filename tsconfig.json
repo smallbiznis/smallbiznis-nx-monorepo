@@ -32,12 +32,6 @@
     },
     {
       "path": "./packages/billing-client"
-    },
-    {
-      "path": "./apps/admin-e2e"
-    },
-    {
-      "path": "./apps/admin"
     }
   ]
 }
