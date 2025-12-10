@@ -171,14 +171,14 @@ export default function SettingsPage() {
                         </p>
                       </div>
                     </div>
-                    <Badge variant="success">Active</Badge>
+                    <Badge variant="default">Active</Badge>
                   </div>
                   <div className="flex items-center gap-2">
                     <code className="flex-1 bg-muted px-3 py-2 rounded font-mono text-sm">
                       sb_live_•••••••••••••••abc123
                     </code>
                     <Button variant="outline" size="sm">Copy</Button>
-                    <Button variant="outline" size="sm" variant="destructive">
+                    <Button variant="outline" size="sm" >
                       Revoke
                     </Button>
                   </div>
@@ -198,14 +198,14 @@ export default function SettingsPage() {
                         </p>
                       </div>
                     </div>
-                    <Badge variant="warning">Test</Badge>
+                    <Badge variant={"destructive"}>Test</Badge>
                   </div>
                   <div className="flex items-center gap-2">
                     <code className="flex-1 bg-muted px-3 py-2 rounded font-mono text-sm">
                       sb_test_•••••••••••••••xyz789
                     </code>
                     <Button variant="outline" size="sm">Copy</Button>
-                    <Button variant="outline" size="sm" variant="destructive">
+                    <Button variant="outline" size="sm" >
                       Revoke
                     </Button>
                   </div>
@@ -434,7 +434,7 @@ export default function SettingsPage() {
                     <div className="flex items-center gap-3">
                       <Badge>{member.role}</Badge>
                       {member.role !== "Owner" && (
-                        <Button variant="ghost" size="sm" variant="destructive">
+                        <Button variant="ghost" size="sm" >
                           Remove
                         </Button>
                       )}

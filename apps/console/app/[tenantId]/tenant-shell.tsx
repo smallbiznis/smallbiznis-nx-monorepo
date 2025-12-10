@@ -3,6 +3,7 @@
 import { useMemo } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import * as Icons from 'lucide-react'
 import { Building2, Check, ChevronDown, ExternalLink, MoreVertical, Plus } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 import { Avatar, AvatarFallback } from "@smallbiznis/ui/avatar"
@@ -43,6 +44,7 @@ export function TenantShell({ navigation, children }: TenantShellProps) {
     () =>
       navigation.map((item) => ({
         ...item,
+        icon: Icons[item.icon],
         isActive: pathname === item.href,
       })),
     [navigation, pathname],

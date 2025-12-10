@@ -24,7 +24,7 @@ export function TenantProvider({ tenantId, license, children }: {
   license: License
   children: ReactNode
 }) {
-  const storeRef = useRef<StoreApi<TenantState>>()
+  const storeRef = useRef<StoreApi<TenantState>>(null)
 
   if (!storeRef.current) {
     storeRef.current = createTenantStore({ tenantId, license })

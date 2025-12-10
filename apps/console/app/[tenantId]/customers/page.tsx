@@ -34,6 +34,8 @@ interface Customer {
   created: string
 }
 
+type StatusBadgeVariant = "default" | "destructive" | "outline" | "secondary" | null | undefined
+
 const mockCustomers: Customer[] = [
   {
     id: "cus_1",
@@ -87,11 +89,13 @@ export default function CustomersPage() {
     return matchesSearch && matchesStatus
   })
 
-  const getStatusColor = (status: Customer['status']) => {
+  const getStatusColor = (status: Customer['status']): StatusBadgeVariant => {
     switch (status) {
-      case 'active': return 'success'
-      case 'trial': return 'warning'
-      case 'inactive': return 'default'
+      case 'active': return 'default'
+      case 'trial': return 'secondary'
+      case 'inactive': return 'destructive'
+      default:
+        return 'default'
     }
   }
 

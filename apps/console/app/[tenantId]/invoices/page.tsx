@@ -23,6 +23,7 @@ import {
 } from "@smallbiznis/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@smallbiznis/ui/tabs"
 
+type StatusBadgeInvoice = "default" | "destructive" | "outline" | "secondary" | null | undefined
 interface Invoice {
   id: string
   number: string
@@ -83,10 +84,10 @@ export default function InvoicesPage() {
     return matchesSearch && matchesStatus
   })
 
-  const getStatusVariant = (status: Invoice['status']) => {
+  const getStatusVariant = (status: Invoice['status']): StatusBadgeInvoice => {
     switch (status) {
-      case 'paid': return 'success'
-      case 'open': return 'warning'
+      case 'paid': return 'default'
+      case 'open': return 'destructive'
       case 'draft': return 'default'
       case 'void': return 'destructive'
     }

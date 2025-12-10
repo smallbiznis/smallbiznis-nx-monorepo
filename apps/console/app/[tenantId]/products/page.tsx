@@ -101,7 +101,7 @@ export default function ProductsPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Badge variant={product.active ? "success" : "default"}>
+                    <Badge variant={product.active ? "outline" : "default"}>
                       {product.active ? "Active" : "Inactive"}
                     </Badge>
                     <Button variant="ghost" size="icon">

@@ -1,5 +1,5 @@
 import { headers } from "next/headers"
-import { redirect } from "next/navigation"
+import { redirect, useParams } from "next/navigation"
 import type { ReactNode } from "react"
 import { fetchTenantLicense } from "@/lib/license"
 import { buildNavigation } from "./navigation"
@@ -13,8 +13,9 @@ interface TenantLayoutProps {
 
 // Server layout loads license and wraps tenant shell UI
 export default async function TenantLayout({ children, params }: TenantLayoutProps) {
-  const { tenantId } = params
-  const headerList = headers()
+
+  const { tenantId } = await params
+  const headerList = await headers()
   const host = headerList.get("host")
   const protocol = headerList.get("x-forwarded-proto") ?? "http"
   const license = await fetchTenantLicense(tenantId, host ? `${protocol}://${host}` : undefined)

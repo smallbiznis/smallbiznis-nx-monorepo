@@ -1,6 +1,6 @@
 // Middleware enforces tenant licensing before any app routes render
 import { NextResponse, type NextRequest } from "next/server"
-import { fetchTenantLicense } from "@/lib/license"
+import { fetchTenantLicense } from "./lib/license"
 
 // Map feature-specific routes to the license feature flag key
 const featureRouteToLicenseKey: Record<string, string> = {
@@ -13,36 +13,31 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const segments = pathname.split("/").filter(Boolean)
 
-  const tenantId = segments[0]
-  const ignoredFirstSegments = new Set([
-    "_next",
-    "api",
-    "favicon.ico",
-    "robots.txt",
-    "sitemap.xml",
-    "license",
-  ])
-
-  const looksLikeAsset = tenantId?.includes(".")
-
-  // Allow static assets and non-tenant routes to continue
-  if (!tenantId || ignoredFirstSegments.has(tenantId) || looksLikeAsset) {
+  // Expected segments:
+  // ["app", "tenantId", "feature"]
+  if (segments[0] !== "app") {
     return NextResponse.next()
   }
 
-  // Pull current license snapshot for the tenant
+  const tenantId = segments[1]
+  const featureRoute = segments[2]
+
+  if (!tenantId) {
+    return NextResponse.next()
+  }
+
+  // Fetch license (server-side)
   const license = await fetchTenantLicense(tenantId, request.nextUrl.origin)
+
   if (!license?.valid) {
     return NextResponse.redirect(new URL("/license/error", request.url))
   }
 
-  const featureRoute = segments[1]
+  // Feature gating
   if (featureRoute) {
     const featureKey = featureRouteToLicenseKey[featureRoute]
     if (featureKey && !license.features?.[featureKey]) {
-      // Forward feature-locked tenants to a friendly upgrade view
-      const errorUrl = new URL(`/${tenantId}/error-license`, request.url)
-      errorUrl.searchParams.set("reason", "feature")
+      const errorUrl = new URL(`/app/${tenantId}/error-license`, request.url)
       errorUrl.searchParams.set("feature", featureKey)
       return NextResponse.rewrite(errorUrl)
     }
@@ -52,5 +47,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: "/:path*",
+  matcher: [
+    "/app/:path*"
+  ],
 }

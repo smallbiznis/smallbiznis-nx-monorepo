@@ -6,18 +6,18 @@ import type { License } from "@/lib/license"
 export type NavigationItem = {
   name: string
   href: string
-  icon: typeof LayoutDashboard
+  icon: string
   featureKey?: string
 }
 
-const baseNavigation: Omit<NavigationItem, "href"> & { path: string }[] = [
-  { name: "Overview", path: "dashboard", icon: LayoutDashboard },
-  { name: "Customers", path: "customers", icon: Users },
-  { name: "Subscriptions", path: "subscriptions", icon: Repeat, featureKey: "subscription" },
-  { name: "Meters", path: "meters", icon: Gauge, featureKey: "meter" },
-  { name: "Invoices", path: "invoices", icon: FileText },
-  { name: "Usage", path: "usage", icon: TrendingUp, featureKey: "usage" },
-  { name: "Settings", path: "settings", icon: Settings },
+const baseNavigation: (Omit<NavigationItem, "href"> & { path: string })[] = [
+  { name: "Overview", path: "dashboard", icon: "LayoutDashboard" },
+  { name: "Customers", path: "customers", icon: "Users" },
+  { name: "Subscriptions", path: "subscriptions", icon: "Repeat", featureKey: "subscription" },
+  { name: "Meters", path: "meters", icon: "Gauge", featureKey: "meter" },
+  { name: "Invoices", path: "invoices", icon: "FileText" },
+  { name: "Usage", path: "usage", icon: "TrendingUp", featureKey: "usage" },
+  { name: "Settings", path: "settings", icon: "Settings" },
 ]
 
 export function buildNavigation(tenantId: string, license: License | null): NavigationItem[] {

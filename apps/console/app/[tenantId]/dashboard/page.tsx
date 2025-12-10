@@ -127,7 +127,7 @@ export default function DashboardPage() {
           <Card key={index} className="hover:shadow-md transition-shadow">
             <CardContent className="pt-6">
               <div className="flex items-start justify-between mb-3">
-                <div className={`p-2 rounded-lg bg-gradient-to-br ${stat.color} transition-colors`}>
+                <div className={`p-2 rounded-lg bg-linear-to-br ${stat.color} transition-colors`}>
                   <stat.icon className="w-5 h-5 text-primary" strokeWidth={2.5} />
                 </div>
                 {stat.trend === "up" && (
@@ -161,7 +161,7 @@ export default function DashboardPage() {
                 <CardTitle>Recent Invoices</CardTitle>
                 <CardDescription>Latest billing activity</CardDescription>
               </div>
-              <Button variant="ghost" size="sm" className="gap-1">
+              <Button variant={"ghost"} size="sm" className="gap-1">
                 View all
                 <ArrowUpRight className="w-4 h-4" />
               </Button>
@@ -195,7 +195,7 @@ export default function DashboardPage() {
                     <TableCell className="font-semibold">{invoice.amount}</TableCell>
                     <TableCell>
                       <Badge
-                        variant={invoice.status === "paid" ? "success" : "warning"}
+                        variant={invoice.status === "paid" ? "default" : "destructive"}
                       >
                         {invoice.status}
                       </Badge>
@@ -260,7 +260,7 @@ export default function DashboardPage() {
                   <code className="font-mono text-sm bg-muted px-2.5 py-1 rounded font-medium">
                     sb_live_abc123...
                   </code>
-                  <Badge variant="success">Active</Badge>
+                  <Badge variant={"default"}>Active</Badge>
                 </div>
                 <div className="text-xs text-muted-foreground">
                   Production Key · Created Dec 1, 2024
@@ -271,7 +271,7 @@ export default function DashboardPage() {
               <Button variant="ghost" size="icon" title="Download">
                 <Download className="w-4 h-4" />
               </Button>
-              <Button variant="ghost" size="sm" variant="destructive">
+              <Button variant="ghost" size="sm">
                 Revoke
               </Button>
             </div>
