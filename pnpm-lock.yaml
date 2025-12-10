@@ -296,6 +296,9 @@ importers:
 
   apps/console:
     dependencies:
+      '@smallbiznis/auth-client':
+        specifier: workspace:*
+        version: link:../../packages/auth-client
       '@smallbiznis/billing-client':
         specifier: workspace:*
         version: link:../../packages/billing-client
