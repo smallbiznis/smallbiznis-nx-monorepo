@@ -3,7 +3,7 @@
 import { useMemo } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import * as Icons from 'lucide-react'
+import * as Icons from "lucide-react"
 import { Building2, Check, ChevronDown, ExternalLink, MoreVertical, Plus } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 import { Avatar, AvatarFallback } from "@smallbiznis/ui/avatar"
@@ -18,10 +18,9 @@ import {
 } from "@smallbiznis/ui/dropdown-menu"
 import { Separator } from "@smallbiznis/ui/separator"
 import { cn } from "@smallbiznis/ui/utils"
-import type { NavigationItem } from "./navigation"
-import { useLicense, useTenantId } from "./tenant-providers"
-
-// Client shell renders the persistent chrome for a tenant session
+import type { NavigationItem } from "@/lib/navigation"
+import { useLicense } from "@/lib/LicenseProvider"
+import { useTenantId } from "./tenant-providers"
 
 interface TenantShellProps {
   navigation: NavigationItem[]
@@ -54,7 +53,7 @@ export function TenantShell({ navigation, children }: TenantShellProps) {
     <div className="min-h-screen bg-muted/30 flex">
       <aside className="w-64 border-r border-border bg-card flex flex-col shadow-sm">
         <div className="p-4 flex-1 flex flex-col gap-6">
-          <Link href={`/${tenantId}/dashboard`} className="flex items-center gap-2.5 px-2">
+          <Link href={`/app/${tenantId}/dashboard`} className="flex items-center gap-2.5 px-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-sm">
               <span className="text-white font-black text-sm">SB</span>
             </div>
@@ -138,7 +137,7 @@ export function TenantShell({ navigation, children }: TenantShellProps) {
           </div>
 
           <div className="text-xs text-muted-foreground">
-            Plan: <span className="font-semibold text-foreground capitalize">{license.plan}</span>
+            Edition: <span className="font-semibold text-foreground capitalize">{license.edition}</span>
           </div>
         </div>
 
@@ -178,7 +177,7 @@ export function TenantShell({ navigation, children }: TenantShellProps) {
               <h1 className="text-2xl font-semibold tracking-tight">{tenantId}</h1>
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="rounded-full border px-3 py-1">{license.plan} plan</span>
+              <span className="rounded-full border px-3 py-1">{license.edition} edition</span>
               <Separator orientation="vertical" className="h-6" />
               <span className="rounded-full border px-3 py-1">License valid</span>
             </div>

@@ -1,20 +1,46 @@
-// Middleware enforces tenant licensing before any app routes render
 import { NextResponse, type NextRequest } from "next/server"
-import { fetchTenantLicense } from "./lib/license"
 
-// Map feature-specific routes to the license feature flag key
+import { isFeatureEnabled, type License, resetLicenseCache } from "./lib/license"
+
 const featureRouteToLicenseKey: Record<string, string> = {
+  customers: "customers",
   meters: "meter",
-  subscriptions: "subscription",
+  subscriptions: "subscriptions",
   usage: "usage",
+  workflow: "workflow",
+}
+
+let middlewareLicense: License | null = null
+
+async function getMiddlewareLicense(origin: string): Promise<License> {
+  if (!middlewareLicense) {
+    middlewareLicense = await fetchLicense(origin)
+  }
+  return middlewareLicense
+}
+
+async function fetchLicense(origin: string): Promise<License> {
+  const response = await fetch(`${origin}/internal/license`, { cache: "no-store" })
+  if (!response.ok) {
+    resetLicenseCache()
+    throw new Error("license unavailable")
+  }
+  return (await response.json()) as License
+}
+
+function isStaticPath(pathname: string) {
+  return pathname.startsWith("/_next") || pathname.startsWith("/favicon") || pathname.startsWith("/internal")
 }
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
+  const { pathname, origin } = request.nextUrl
+
+  if (isStaticPath(pathname)) {
+    return NextResponse.next()
+  }
+
   const segments = pathname.split("/").filter(Boolean)
 
-  // Expected segments:
-  // ["app", "tenantId", "feature"]
   if (segments[0] !== "app") {
     return NextResponse.next()
   }
@@ -22,32 +48,28 @@ export async function middleware(request: NextRequest) {
   const tenantId = segments[1]
   const featureRoute = segments[2]
 
-  if (!tenantId) {
-    return NextResponse.next()
-  }
+  try {
+    const license = await getMiddlewareLicense(origin)
 
-  // Fetch license (server-side)
-  const license = await fetchTenantLicense(tenantId, request.nextUrl.origin)
-
-  if (!license?.valid) {
-    return NextResponse.redirect(new URL("/license/error", request.url))
-  }
-
-  // Feature gating
-  if (featureRoute) {
-    const featureKey = featureRouteToLicenseKey[featureRoute]
-    if (featureKey && !license.features?.[featureKey]) {
-      const errorUrl = new URL(`/app/${tenantId}/error-license`, request.url)
-      errorUrl.searchParams.set("feature", featureKey)
-      return NextResponse.rewrite(errorUrl)
+    if (!license.valid) {
+      return NextResponse.redirect(new URL("/license/error", request.url))
     }
+
+    if (featureRoute) {
+      const featureKey = featureRouteToLicenseKey[featureRoute]
+      if (featureKey && !isFeatureEnabled(license, featureKey)) {
+        const errorUrl = new URL(`/app/${tenantId}/error-license`, request.url)
+        errorUrl.searchParams.set("feature", featureKey)
+        return NextResponse.redirect(errorUrl)
+      }
+    }
+  } catch (_error) {
+    return NextResponse.redirect(new URL("/license/error", request.url))
   }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: [
-    "/app/:path*"
-  ],
+  matcher: ["/app/:path*"],
 }

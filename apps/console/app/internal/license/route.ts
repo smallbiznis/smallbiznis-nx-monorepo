@@ -1,26 +1,52 @@
 import { NextResponse, type NextRequest } from "next/server"
 
-// Simple mock license endpoint to keep development self contained
-const defaultFeatures = {
-  subscription: true,
-  meter: true,
-  usage: false,
-}
+import type { License } from "@/lib/license"
 
-export async function GET(request: NextRequest) {
-  const tenantId = request.nextUrl.searchParams.get("tenantId") ?? "unknown"
-  const plan = tenantId === "enterprise" ? "enterprise" : "pro"
+let cachedLicense: License | null = null
+let cachedAt: number | null = null
 
-  const license = {
-    tenantId,
-    plan,
-    valid: true,
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString(),
-    features: {
-      ...defaultFeatures,
-      usage: plan === "enterprise",
+const SERVICE_BASE_URL = process.env.LICENSE_SERVICE_URL ?? "http://127.0.0.1:8080"
+const CACHE_TTL_MS = 5 * 60 * 1000
+
+async function fetchDeploymentLicense() {
+  const response = await fetch(new URL("/internal/license", SERVICE_BASE_URL).toString(), {
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
     },
+  })
+
+  if (!response.ok) {
+    throw new Error(`license service returned ${response.status}`)
   }
 
-  return NextResponse.json(license)
+  const payload = (await response.json()) as License
+  cachedLicense = payload
+  cachedAt = Date.now()
+  return payload
+}
+
+async function getCachedLicenseSnapshot() {
+  if (cachedLicense && cachedAt && Date.now() - cachedAt < CACHE_TTL_MS) {
+    return cachedLicense
+  }
+  return fetchDeploymentLicense()
+}
+
+export async function GET(_request: NextRequest) {
+  try {
+    const license = await getCachedLicenseSnapshot()
+    const status = license.valid ? 200 : 403
+    return NextResponse.json(license, { status })
+  } catch (error) {
+    return NextResponse.json(
+      {
+        valid: false,
+        edition: "unknown",
+        features: {},
+        error: error instanceof Error ? error.message : "license unavailable",
+      },
+      { status: 500 },
+    )
+  }
 }

@@ -1,31 +1,27 @@
-import { cache } from "react"
-
-// Shared license typing used across middleware, layouts, and page guards
-
-export type LicenseFeatureKey = "subscription" | "meter" | "usage" | string
+export type LicenseEdition = "enterprise" | "community" | string
 
 export interface License {
-  tenantId: string
-  plan: string
   valid: boolean
-  expiresAt?: string
-  features?: Record<LicenseFeatureKey, boolean>
+  edition: LicenseEdition
+  features: Record<string, boolean>
+  expires_at?: string
 }
 
-const LICENSE_API_BASE = process.env.LICENSE_API_BASE_URL ?? process.env.NEXT_PUBLIC_SITE_URL
+let cachedLicensePromise: Promise<License> | null = null
 
-// Fetch license with simple caching to avoid duplicate upstream calls per request lifecycle
-// Server-side helper to pull the latest license snapshot for a tenant
-export const fetchTenantLicense = cache(async (
-  tenantId: string,
-  baseUrl?: string,
-): Promise<License | null> => {
-  if (!tenantId) return null
+function normalizeLicense(payload: Partial<License>): License {
+  return {
+    valid: Boolean(payload.valid),
+    edition: payload.edition ?? "community",
+    features: payload.features ?? {},
+    expires_at: payload.expires_at,
+  }
+}
 
-  const resolvedBase = baseUrl ?? LICENSE_API_BASE ?? "http://localhost:3000"
-  const licenseUrl = new URL(`/internal/license?tenantId=${encodeURIComponent(tenantId)}`, resolvedBase)
-
-  const response = await fetch(licenseUrl, {
+async function fetchLicense(baseUrl?: string): Promise<License> {
+  const resolvedBase = baseUrl ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:4200"
+  const url = new URL("/internal/license", resolvedBase)
+  const response = await fetch(url.toString(), {
     cache: "no-store",
     headers: {
       "Content-Type": "application/json",
@@ -33,16 +29,30 @@ export const fetchTenantLicense = cache(async (
   })
 
   if (!response.ok) {
-    return null
+    throw new Error(`license endpoint returned ${response.status}`)
   }
 
-  const payload = (await response.json()) as License
-  return payload ?? null
-})
+  const payload = (await response.json()) as Partial<License>
+  return normalizeLicense(payload)
+}
 
-// Server/client guard to short-circuit when a feature is not present on the license
-export function assertFeature(license: License | null, featureKey: LicenseFeatureKey) {
-  if (!license?.features?.[featureKey]) {
-    throw new Error("FEATURE_NOT_ALLOWED")
+export async function getGlobalLicense(baseUrl?: string): Promise<License> {
+  if (!cachedLicensePromise) {
+    cachedLicensePromise = fetchLicense(baseUrl)
   }
+  try {
+    return await cachedLicensePromise
+  } catch (error) {
+    cachedLicensePromise = null
+    throw error
+  }
+}
+
+export function resetLicenseCache() {
+  cachedLicensePromise = null
+}
+
+export function isFeatureEnabled(license: License | null, featureKey: string) {
+  if (!license?.valid) return false
+  return Boolean(license.features?.[featureKey])
 }

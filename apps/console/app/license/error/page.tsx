@@ -3,8 +3,6 @@ import { AlertTriangle, ArrowLeft } from "lucide-react"
 import { Button } from "@smallbiznis/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@smallbiznis/ui/card"
 
-// Shared error surface used when middleware blocks invalid licenses
-
 export default function LicenseErrorPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/40 p-6">
@@ -15,11 +13,11 @@ export default function LicenseErrorPage() {
           </div>
           <CardTitle>License issue detected</CardTitle>
           <CardDescription>
-            Your current tenant license is missing, expired, or does not include the requested feature.
+            The deployment license is missing, expired, or cannot be verified.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 text-sm text-muted-foreground text-center">
-          <p>Please contact your organization administrator to refresh or upgrade the license.</p>
+          <p>Restart the stack with a valid offline license or contact your administrator.</p>
           <div className="flex items-center justify-center gap-3">
             <Button variant="outline" asChild>
               <Link href="/">

@@ -1,15 +1,15 @@
-import "./global.css"
-
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import type { ReactNode } from "react"
 
-import { LicenseProvider } from "@/lib/LicenseProvider"
 import { getGlobalLicense } from "@/lib/license"
+import { buildNavigation } from "@/lib/navigation"
+import { TenantShell } from "./tenant-shell"
+import { TenantProvider } from "./tenant-providers"
 
-export const metadata = {
-  title: "SmallBiznis Tenant Console",
-  description: "Self-hosted tenant console secured by offline licenses",
+interface TenantLayoutProps {
+  children: ReactNode
+  params: { tenantId: string }
 }
 
 async function resolveBaseUrl() {
@@ -22,7 +22,8 @@ async function resolveBaseUrl() {
   return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:4200"
 }
 
-export default async function RootLayout({ children }: { children: ReactNode }) {
+export default async function TenantLayout({ children, params }: TenantLayoutProps) {
+  const { tenantId } = params
   const baseUrl = await resolveBaseUrl()
   const license = await getGlobalLicense(baseUrl)
 
@@ -30,11 +31,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     redirect("/license/error")
   }
 
+  const navigation = buildNavigation(tenantId, license)
+
   return (
-    <html lang="en">
-      <body>
-        <LicenseProvider license={license}>{children}</LicenseProvider>
-      </body>
-    </html>
+    <TenantProvider tenantId={tenantId}>
+      <TenantShell navigation={navigation}>{children}</TenantShell>
+    </TenantProvider>
   )
 }
